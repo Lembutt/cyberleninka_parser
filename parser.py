@@ -70,13 +70,13 @@ class CyberleninkaParser(_Parser):
     def __init__(self, query):
         self.chrome = self.setup_wd()
         num_of_pages = self._get_number_of_pages(query)
+        print(num_of_pages)
         self.pubs = self._parse(query, num_of_pages)
 
     def _get_number_of_pages(self, query):
         html = self.chrome.get_html(self.URL + urllib.parse.urlencode({'q': query}))
         bs = self.get_bs(html)
-        num_of_pages = int(bs.find("h1", {"class": "bigheader"}).find('span').text.split(' ')[2].split('(')[0]) % 10
-        
+        num_of_pages = int(bs.find("h1", {"class": "bigheader"}).find('span').text.split(' ')[2].split('(')[0]) // 10
         if num_of_pages == 0:
             return 1
         if num_of_pages > 10:
