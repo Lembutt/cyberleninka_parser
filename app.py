@@ -5,3 +5,4 @@ if __name__ == '__main__':
     query = input()
     pubs = CyberleninkaParser(query).pubs
     print(pubs.count())
+    pubs.insert_into_db()
