@@ -24,8 +24,12 @@ class Database:
             self.connect()
         if self.cursor is None:
             self.get_cursor()
-        self.__execute(query)
+        res = self.__execute(query)
+        print(res)
+        return res
 
     def __execute(self, query):
         self.cursor.execute(query)
+        self.conn.commit()
+        return self.cursor.fetchone()
 

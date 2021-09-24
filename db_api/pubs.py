@@ -5,7 +5,12 @@ from . import postgres
 
 class Publication:
     def __init__(self, data: dict):
-        self.__dict__ = data
+        for k, v in data.items():
+            if type(v) == type([]):
+                for i in range(len(v)):
+                    self.__dict__[k] = v[i].replace("'", "___")
+            else:
+                self.__dict__[k] = v.replace("'", "___")
 
     def get_str(self):
         return f'{self.name}, {self.authors}'
@@ -27,10 +32,13 @@ class PublicationList:
 
     def insert_into_db(self):
         conf = config.Config()
-        json_data = [json.dumps(pub.__dict__, ensure_ascii=False).replace("'","''") for pub in self.list]        
-        print(json_data)
-        query = f"""
-        select * 
-        from {conf.db_schema}.fn_pub_add_texts(ARRAY{json_data});"""
-        postgres.Database().query(query)
-        
+        for pub in self.list:
+            pub_json = json.dumps(pub.__dict__, ensure_ascii=False)
+            query = f"""
+                select * 
+                from {conf.db_schema}.fn_pub_add_texts('{pub_json}');
+            """
+            try:
+                res = postgres.Database().query(query)
+            except Exception as e:
+                print(e)
