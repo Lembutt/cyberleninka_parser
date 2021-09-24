@@ -8,7 +8,8 @@ class Publication:
         for k, v in data.items():
             if type(v) == type([]):
                 for i in range(len(v)):
-                    self.__dict__[k] = v[i].replace("'", "___")
+                    v[i] = v[i].replace("'", "___").strip()
+                self.__dict__[k] = v
             else:
                 self.__dict__[k] = v.replace("'", "___")
 
