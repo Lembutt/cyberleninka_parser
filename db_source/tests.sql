@@ -10,5 +10,6 @@ select * from test.texts where name = 'Анализ технологий веб-
 delete from test.texts where name = 'Анализ технологий веб-программирования для создания модулей визуализации и выгрузки данных информационных систем';
 
 select * from test.texts;
+SELECT pg_size_pretty(pg_database_size('texts'));
 
 select * from json_array_elements_text('["foo", "bar"]')

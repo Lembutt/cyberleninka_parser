@@ -25,7 +25,6 @@ class Database:
         if self.cursor is None:
             self.get_cursor()
         res = self.__execute(query)
-        print(res)
         return res
 
     def __execute(self, query):

@@ -1,0 +1,34 @@
+.container {
+    display: grid;
+}
+
+#page {
+  display: grid;
+  width: 100%;
+  height: 200px;
+  grid-template: [header-left] "logo head"  10fr [header-right]
+                 [main-left]   "nav  main" 1fr  [main-right]
+                 [footer-left] "nav  foot" 30px [footer-right]
+                 / 120px 1fr;
+}
+
+ul {
+    margin: 0;
+    padding: 4px;
+}
+
+ul li {
+    display: inline;
+    margin-right: 5px;
+    padding: 3px;
+}
+
+body {
+    width: 100%;
+    overflow: hidden;
+    max-width: 1400px;
+    margin: auto;
+    min-width: 890px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}

@@ -8,7 +8,16 @@ DECLARE
     BEGIN
         RAISE WARNING '%', text_data::jsonb -> 'authors';
         EXECUTE
-            'INSERT INTO test.texts (name, authors, link, source_id, year, description, query_id, resource) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *'
+            'INSERT INTO test.texts (' ||
+                'name, authors, link, ' ||
+                'source_id, year, description, ' ||
+                'query_id, resource, annotation, ' ||
+                'status, text, keywords' ||
+            ') VALUES ($1, $2, $3, ' ||
+            '          $4, $5, $6, ' ||
+            '          $7, $8, $9, ' ||
+            '          $10, $11, $12' ||
+            ') RETURNING *'
         INTO return_row
         USING text_data::jsonb ->> 'name',
               text_data::jsonb -> 'authors',
@@ -17,7 +26,11 @@ DECLARE
               to_date(text_data::jsonb ->> 'year', 'YYYY'),
               text_data::jsonb ->> 'info',
               ARRAY [query_id],
-              text_data::jsonb ->> 'resource';
+              text_data::jsonb ->> 'resource',
+              text_data::jsonb ->> 'annotation',
+              text_data::jsonb -> 'status',
+              text_data::jsonb ->> 'text',
+              text_data::jsonb -> 'keywords';
         RETURN row_to_json(return_row);
     end
 $$;

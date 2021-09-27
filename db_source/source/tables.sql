@@ -31,13 +31,14 @@ create table test.texts
     authors     jsonb,
     link        text unique,
     source_id   integer,
-    status      text,
+    status      jsonb,
     year        date,
-    description text unique,
+    description text,
     keywords    jsonb,
     query_id    integer[],
-    annotation  text unique,
+    text        text,
     resource    text,
+    annotation  text,
     foreign key (source_id) references test.sources (id)
 );
 alter table test.texts
