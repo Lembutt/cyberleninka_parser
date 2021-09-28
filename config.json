@@ -4,5 +4,6 @@
   "db_user": "",
   "db_pass": "",
   "db_name": "",
-  "db_schema": ""
+  "db_schema": "",
+  "max_pages": 100
 }
