@@ -2,6 +2,7 @@ import requests
 import urllib
 from . import base
 from db_api import PublicationList, Publication
+import config
 
 class CyberleninkaParser(base._Parser):
     """
@@ -26,8 +27,8 @@ class CyberleninkaParser(base._Parser):
         num_of_pages = int(bs.find("h1", {"class": "bigheader"}).find('span').text.split(' ')[2].split('(')[0]) // 10
         if num_of_pages == 0:
             return 1
-        if num_of_pages > 10:
-            return 10
+        if num_of_pages > config.Config().max_pages:
+            return config.Config().max_pages
         return num_of_pages
 
     def _parse(self, query, num_of_pages):
