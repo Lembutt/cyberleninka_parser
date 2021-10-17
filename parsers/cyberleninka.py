@@ -35,52 +35,55 @@ class CyberleninkaParser(base._Parser):
         pubs = PublicationList()
         for page in range(1, num_of_pages+1):
             url = self.URL + urllib.parse.urlencode({'q': query, 'page': page})
-            print(url)
             html_list = self.chrome.get_html(url, wait=True)
             bs_list = self.get_bs(html_list)
             results = bs_list.find("ul", {"id": "search-results"}).findAll('li')
+                
             for res in results:
-                link = 'https://cyberleninka.ru' + res.findAll('a', href=True)[0]['href']
-                html_article = requests.get(link).text
-                bs_article = self.get_bs(html_article)
-                parsed_res_dict = {
-                    'link': link,
-                    'name': res.findAll('h2', {'class': 'title'})[0].text,
-                    'authors': res.findAll('span')[0].text.split(', '),
-                    'info': res.findAll('div')[0].text,
-                    'year': res.findAll('span', {'class': 'span-block'})[0].text.split(' / ')[0],
-                    'source_name': res.findAll('span', {'class': 'span-block'})[0].text.split(' / ')[1],
-                    'source_link': 'https://cyberleninka.ru' + res.findAll('a', href=True)[1]['href'],
-                    'resource': 'cyberleninka',
-                    'query': query.split(','),
-                    'text': bs_article.find("div", {"class": "ocr", "itemprop": "articleBody"}).get_text()
-                }
+                try:        
+                    link = 'https://cyberleninka.ru' + res.findAll('a', href=True)[0]['href']
+                    html_article = requests.get(link).text
+                    bs_article = self.get_bs(html_article)
+                    parsed_res_dict = {
+                        'link': link,
+                        'name': res.findAll('h2', {'class': 'title'})[0].text,
+                        'authors': res.findAll('span')[0].text.split(', '),
+                        'info': res.findAll('div')[0].text,
+                        'year': res.findAll('span', {'class': 'span-block'})[0].text.split(' / ')[0],
+                        'source_name': res.findAll('span', {'class': 'span-block'})[0].text.split(' / ')[1],
+                        'source_link': 'https://cyberleninka.ru' + res.findAll('a', href=True)[1]['href'],
+                        'resource': 'cyberleninka',
+                        'query': query.split(','),
+                        'text': bs_article.find("div", {"class": "ocr", "itemprop": "articleBody"}).get_text()
+                    }
 
-                if bs_article.find("i", {"itemprop": "keywords"}) is not None:
-                    kwords_tagged = bs_article.find("i", {"itemprop": "keywords"}).findAll("span")
-                    kwords = [kwords_tagged[i].text for i in range(len(kwords_tagged))]
-                else:
-                    kwords = []
+                    if bs_article.find("i", {"itemprop": "keywords"}) is not None:
+                        kwords_tagged = bs_article.find("i", {"itemprop": "keywords"}).findAll("span")
+                        kwords = [kwords_tagged[i].text for i in range(len(kwords_tagged))]
+                    else:
+                        kwords = []
 
-                parsed_res_dict['keywords'] = kwords
+                    parsed_res_dict['keywords'] = kwords
 
-                if bs_article.find("div", {"class": "labels"}) is not None:
-                    labels_tagged = bs_article.find("div", {"class": "labels"}).findAll("div", "label")
-                    labels = [labels_tagged[i].text for i in range(1, len(labels_tagged))]
-                else:
-                    labels = []
+                    if bs_article.find("div", {"class": "labels"}) is not None:
+                        labels_tagged = bs_article.find("div", {"class": "labels"}).findAll("div", "label")
+                        labels = [labels_tagged[i].text for i in range(1, len(labels_tagged))]
+                    else:
+                        labels = []
 
-                parsed_res_dict['status'] = labels
-                print(labels)
+                    parsed_res_dict['status'] = labels
+                    print(labels)
 
-                if bs_article.find("p", {"itemprop": "description"}) is not None:
-                    annotation = bs_article.find("p", {"itemprop": "description"}).text
-                else:
-                    annotation = ""
+                    if bs_article.find("p", {"itemprop": "description"}) is not None:
+                        annotation = bs_article.find("p", {"itemprop": "description"}).text
+                    else:
+                        annotation = ""
+                
+                    parsed_res_dict['annotation'] = annotation
 
-                parsed_res_dict['annotation'] = annotation
-                print(annotation)
-
-                pubs.add(Publication(parsed_res_dict))
+                    pubs.add(Publication(parsed_res_dict))
+                except Exception as e:
+                    print('exeption!', e)
+                    pass
         return pubs
 
