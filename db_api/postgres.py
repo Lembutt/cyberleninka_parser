@@ -1,5 +1,7 @@
 from config import Config
 import psycopg2
+import json
+from tagcloud import tc
 
 class Database:
     def __init__(self):
@@ -31,4 +33,12 @@ class Database:
         self.cursor.execute(query)
         self.conn.commit()
         return self.cursor.fetchone()
+
+    def get_counted(self):
+        query = """SELECT * FROM test.fn_pub_get_counted_data('{"get": true}'::jsonb);"""
+        res, = self.query(query)
+        print(res)
+        tc_ = tc.TagCloud(res['annotations'])
+        return tc_
+               
 
