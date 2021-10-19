@@ -9,3 +9,5 @@ select * from test.texts;
 
 -- check size of db
 SELECT pg_size_pretty(pg_database_size('texts'));
+
+SELECT * FROM test.fn_pub_get_counted_data('{"get": true}'::jsonb);
